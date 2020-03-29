@@ -136,8 +136,7 @@ def main
 		path=findSteamPath(dirlst[hdd])+"/"+gamelst[hdd][game]
 		exeFile = getGameExe(path)
 	end
-puts exeFile
-	#exec(exeFile)
+	exec(exeFile)
 	#puts gamelst[hdd][game]
 end
 main
