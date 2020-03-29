@@ -54,6 +54,58 @@ def findGames(drive)
 	return gamelst
 end
 
+def getGameExe(gamepath)
+	path = gamepath
+	Dir.chdir path
+	#below is for looking through the first level for the .exe
+	Dir.foreach(Dir.pwd) do |file|
+		if File.extname(file)==".exe"
+			return path + "/" + file
+		end
+	end
+	Dir.foreach(Dir.pwd) do |file|
+		if file == "Binaries" || file == "bin"
+			Dir.chdir file
+			return binPath(Dir.pwd)
+		end
+	end
+	Dir.foreach(Dir.pwd) do |file|
+		if file == "Game"
+			Dir.chdir file
+			file.each do |file2|
+				if File.extname(file) == ".exe"
+					return Dir.pwd + "/" + file
+				end
+			end
+			
+		end
+	end
+	return -1
+	
+end
+
+def binPath(path)
+	Dir.chdir = path
+	Dir.foreach(Dir.pwd) do |file|
+		if file == "Win32" || file == "Win64"
+			Dir.chdir file
+			file.each do |inFile|
+				if File.extname(file)
+					return path + "/" + file
+				end
+			end
+		
+		elsif File.extname(file)==".exe"
+			return path + "/" + file
+		end
+	end
+end
+
+def test
+	path= "/mnt/f/Steam/steamapps/common/BioShock Remastered"
+	puts getGameExe(path)
+end
+
 def main()
 	Dir.chdir "/mnt"
 	dirlst=[]
@@ -68,6 +120,16 @@ def main()
 	end
 	hdd = rand(dirlst.length())
 	game = rand(gamelst[hdd].length())
+	path="/mnt/"+dirlst[hdd]+"/Steam/steamapps/common/"+gamelst[hdd][game]
+	exeFile = getGameExe(path)
+	while exeFile == -1
+		hdd = rand(dirlst.length())
+		game = rand(gamelst[hdd].length())
+		path="/mnt/"+dirlst[hdd]+"/Steam/steamapps/common/"+gamelst[hdd][game]
+		exeFile = getGameExe(path)
+	end
+	
+	exec(exeFile)
 	puts gamelst[hdd][game]
 end
 main()
