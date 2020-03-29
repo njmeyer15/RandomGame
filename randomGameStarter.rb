@@ -75,7 +75,8 @@ def getGameExe(gamepath)
 		end
 	end
 	Dir.foreach(Dir.pwd) do |file|
-		if file == "Game"
+		#below is for just going one extra level through to the .exe
+		if file == "Game" || file == "GameData" || file =="x64 || file =="System"
 			Dir.chdir file
 			file.each do |file2|
 				if File.extname(file) == ".exe"
@@ -137,6 +138,6 @@ def main
 		exeFile = getGameExe(path)
 	end
 	exec(exeFile)
-	#puts gamelst[hdd][game]
+	
 end
 main
