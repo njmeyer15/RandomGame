@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'shellwords'
 
 def findSteam(drive)
 	path = "/mnt/" + drive
@@ -59,8 +60,8 @@ def getGameExe(gamepath)
 	Dir.chdir path
 	#below is for looking through the first level for the .exe
 	Dir.foreach(Dir.pwd) do |file|
-		if File.extname(file)==".exe"
-			return path + "/" + file
+		if File.extname(file)==".exe" || File.extname(file)==".EXE"
+			return gamepath+"/" + file
 		end
 	end
 	Dir.foreach(Dir.pwd) do |file|
@@ -70,16 +71,16 @@ def getGameExe(gamepath)
 			if path == -1
 				return -1
 			else
-				return binPath(Dir.pwd)
+				return path
 			end
 		end
 	end
 	Dir.foreach(Dir.pwd) do |file|
 		#below is for just going one extra level through to the .exe
-		if file == "Game" || file == "GameData" || file =="x64 || file =="System"
+		if file == "Game" || file == "GameData" || file =="x64" || file =="System"
 			Dir.chdir file
-			file.each do |file2|
-				if File.extname(file) == ".exe"
+			Dir.foreach(Dir.pwd) do |file2|
+				if File.extname(file) == ".exe" || File.extname(file)==".EXE"
 					return Dir.pwd + "/" + file
 				end
 			end
@@ -95,24 +96,24 @@ def binPath(path)
 	Dir.foreach(Dir.pwd) do |file|
 		if file == "Win32" || file == "Win64"
 			Dir.chdir file
-			file.each do |inFile|
-				if File.extname(file)
-					return path + "/" + file
+			Dir.foreach(Dir.pwd) do |inFile|
+				if File.extname(inFile)==".exe" || File.extname(file)==".EXE"
+					return path+"/" + file+ "/"+inFile
 				end
 			end
 		
-		elsif File.extname(file)==".exe"
-			return path + "/" + file
+		elsif File.extname(file)==".exe" || File.extname(file)==".EXE"
+			return path+ "/" + file
 		end
 	end
 	return -1
 end
 
-def test
+#def test
 	#path= "/mnt/f/Steam/steamapps/common/BioShock Remastered"
 	#puts getGameExe(path)
-	puts findSteamPath("c")
-end
+	#puts findSteamPath("c")
+#end
 
 def main
 	Dir.chdir "/mnt"
@@ -137,7 +138,23 @@ def main
 		path=findSteamPath(dirlst[hdd])+"/"+gamelst[hdd][game]
 		exeFile = getGameExe(path)
 	end
-	exec(exeFile)
+	rGame= gamelst[hdd][game]
+	puts "you will be playing " + rGame
+	puts exeFile
+	#exeFile = exeFile
+	
+	if File.exist?(exeFile)
+		exec("#{exeFile.shellescape}")
+	else
+		while exeFile == -1
+			hdd = rand(dirlst.length())
+			game = rand(gamelst[hdd].length())
+			path=findSteamPath(dirlst[hdd])+"/"+gamelst[hdd][game]
+			exeFile = getGameExe(path)
+			exec("#{exeFile.shellescape}")
+		end
+	end
 	
 end
+
 main
