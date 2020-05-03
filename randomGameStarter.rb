@@ -114,9 +114,8 @@ end
 	#puts getGameExe(path)
 	#puts findSteamPath("c")
 #end
-
-def main
-	Dir.chdir "/mnt"
+def randomGame
+Dir.chdir "/mnt"
 	dirlst=[]
 	Dir.foreach(Dir.pwd) do |drive|
 		if findSteam(drive)
@@ -138,11 +137,32 @@ def main
 		path=findSteamPath(dirlst[hdd])+"/"+gamelst[hdd][game]
 		exeFile = getGameExe(path)
 	end
-	rGame= gamelst[hdd][game]
-	puts "you will be playing " + rGame
-	puts exeFile
-	#exeFile = exeFile
-	
+	return gamelst[hdd][game],exeFile
+end
+def main
+	lst=randomGame
+	game=lst[0] 
+	exeFile=lst[1]
+	puts "Would you like to play " + game + "?"
+	choice = gets.chomp.downcase
+	puts choice
+	while choice!= "yes" 
+		lst=randomGame
+		game=lst[0] 
+		exeFile=lst[1]
+		puts "Would you like to play " + game + "?"
+		choice = gets.chomp.downcase
+	end
+	puts "Does #{exeFile} look right?"
+	choice = gets.chomp.downcase
+	while choice!= "yes"
+		puts "Choosing a different game"
+		lst=randomGame
+		game=lst[0] 
+		exeFile=[1]
+		puts "Would you like to play " + game + "?"
+		choice = gets.chomp.downcase
+	end
 	if File.exist?(exeFile)
 		exec("#{exeFile.shellescape}")
 	else
