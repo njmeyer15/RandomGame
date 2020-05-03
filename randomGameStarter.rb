@@ -143,6 +143,7 @@ def main
 	lst=randomGame
 	game=lst[0] 
 	exeFile=lst[1]
+	puts "note: not all games will run correctly"
 	puts "Would you like to play " + game + "?"
 	choice = gets.chomp.downcase
 	puts choice
