@@ -146,7 +146,6 @@ def main
 	puts "note: not all games will run correctly"
 	puts "Would you like to play " + game + "?"
 	choice = gets.chomp.downcase
-	puts choice
 	while choice!= "yes" 
 		lst=randomGame
 		game=lst[0] 
